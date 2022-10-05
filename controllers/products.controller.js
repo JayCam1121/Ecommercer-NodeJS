@@ -4,8 +4,7 @@ const { Category } = require('../models/category.model');
 const { User } = require('../models/user.model');
 
 // Utils
-const { ref, uploadBytes } = require('firebase/storage');
-const { storage } = require('../utils/firebase.util');
+const { uploadProductImgs } = require('../utils/firebase.util');
 const { catchAsync } = require('../utils/catchAsync.util');
 
 const getAllProducts = catchAsync(async (req, res, next) => {
@@ -39,20 +38,7 @@ const createProduct = catchAsync(async (req, res, next) => {
         userId: sessionUser.id,
     });
 
-    if (req.files.length > 0) {
-        const filesPromises = req.files.map(async file => {
-            const imgRef = ref(storage, `products/${Date.now()}_${file.originalname}`);
-            const imgRes = await uploadBytes(imgRef, file.buffer);
-
-            return await ProductImg.create({
-                productId: newProduct.id,
-                imgUrl: imgRes.metadata.fullPath,
-            });
-        });
-
-        await Promise.all(filesPromises);
-    }
-
+    await uploadProductImgs(req.files, newProduct.id);
 
     res.status(201).json({ newProduct });
 });
