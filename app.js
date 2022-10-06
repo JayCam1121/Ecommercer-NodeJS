@@ -1,4 +1,7 @@
 const express = require('express');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
 const cors = require('cors');
 
 // Controllers
@@ -17,6 +20,13 @@ app.use(cors());
 
 // Enable incoming JSON data
 app.use(express.json());
+
+app.use(helmet());
+
+app.use(compression());
+
+if(process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+else if (process.env.NODE_ENV === 'production') app.use(morgan('combined'));
 
 // Endpoints
 app.use('/api/v1/users', usersRouter);

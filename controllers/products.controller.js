@@ -19,7 +19,7 @@ const getAllProducts = catchAsync(async (req, res, next) => {
     res.status(200).json({ products });
     });
 
-    const getProductById = catchAsync(async (req, res, next) => {
+const getProductById = catchAsync(async (req, res, next) => {
     const { product } = req;
 
     res.status(200).json({ product });
